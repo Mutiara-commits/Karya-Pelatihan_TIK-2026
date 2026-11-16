@@ -7,3 +7,18 @@ Beberapa orang kesulitan dalam memilih pasangan warna antara satu warna dengan w
 
 HTML5 : Digunakan untuk membuat struktur halaman website, seperti judul, kotak warna, dan informasi kombinasi warna
 
+
+
+Prompt ( Gemini ) : Kamu adalah programmer web yang ahli dan sabar.
+Buatkan website bernama "ilyTint " dalam SATU file HTML.
+Aplikasi ini untuk membantu orang orang untuk menentukan kombinasi yang pas dari satu warna yang di masukan.
+
+Fitur yang aku mau:
+1. Setelah memasukkan 1 warna pada kotak kosong, muncul beberapa opsi warna yang akan menjadi pasangan warna tersebut, ada sekitar 2 sampai 3 kombinasi warna beranak dari satu warna yang telah disediakan
+
+2. Buat kotak warna nya seperti color wheel berbentuk kotak
+
+Gaya: minimalis, warna soft, dengan font virtual sebagai judul dan font times New roman sebagai penjelasan, seperti majalah fashion, Typography, rapi di laptop maupun HP.
+Berikan kode lengkap tanpa dipotong dalam satu blok kode, lalu jelaskan singkat cara menjalankannya.
+
+Rintangan
