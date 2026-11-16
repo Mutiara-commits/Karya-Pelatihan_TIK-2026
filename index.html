@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ilyTint — Editorial Color Harmony Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Syne / Space Grotesk (Virtual/Avant-garde Editorial Style) & Cormorant/Times fallback -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        // Font Virtual / Avant-garde untuk Judul
+                        'virtual': ['"Syne"', 'sans-serif'],
+                        // Font Times New Roman untuk Penjelasan Editorial
+                        'editorial': ['"Times New Roman"', 'Times', 'serif'],
+                    },
+                    colors: {
+                        'soft-cream': '#FAF8F5',
+                        'soft-sand': '#F2EDE4',
+                        'soft-charcoal': '#2C2A29',
+                        'soft-taupe': '#8C8278',
+                        'soft-blush': '#E8D8D5',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styling untuk memastikan nuansa majalah fashion yang halus dan rapi */
+        body {
+            background-color: #FAF8F5;
+            color: #2C2A29;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Square Color Wheel Canvas Styling */
+        #squareColorWheel {
+            cursor: crosshair;
+            touch-action: none;
+            box-shadow: inset 0 0 0 1px rgba(44, 42, 41, 0.08);
+        }
+
+        /* Custom Hue Slider untuk melengkapi Square Color Wheel */
+        input[type="range"].hue-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 14px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, 
+                #ff0000 0%, #ffff00 17%, #00ff00 33%, 
+                #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+            outline: none;
+            cursor: pointer;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        input[type="range"].hue-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #FAF8F5;
+            border: 3px solid #2C2A29;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transition: transform 0.15s ease;
+        }
+
+        input[type="range"].hue-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
+        }
+
+        input[type="range"].hue-slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #FAF8F5;
+            border: 3px solid #2C2A29;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        /* Animasi halus saat palet muncul */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-editorial {
+            animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* Toast notification */
+        #toast {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-soft-blush selection:text-soft-charcoal">
+
+    <!-- Header Editorial / Masthead Majalah -->
+    <header class="w-full border-b border-soft-charcoal/10 bg-soft-cream/80 backdrop-blur-md sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-5 sm:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-baseline gap-3">
+                <span class="font-editorial italic text-xs sm:text-sm tracking-widest uppercase text-soft-taupe">Vol. 01 — Color Curation</span>
+            </div>
+            
+            <h1 class="font-virtual text-3xl sm:text-5xl font-extrabold tracking-tight text-soft-charcoal">
+                ilyTint<span class="text-soft-taupe font-light">.</span>
+            </h1>
+            
+            <div class="hidden sm:block text-right">
+                <p class="font-editorial italic text-sm text-soft-taupe">Aesthetic Palette Atelier</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Editorial Content -->
+    <main class="max-w-6xl w-full mx-auto px-5 sm:px-8 py-8 sm:py-14 flex-grow">
+        
+        <!-- Intro Editorial Lead -->
+        <section class="max-w-2xl mx-auto text-center mb-10 sm:mb-16">
+            <p class="font-editorial italic text-sm sm:text-base text-soft-taupe mb-2 tracking-wide">
+                Curated Chromatic Harmonies
+            </p>
+            <h2 class="font-virtual text-2xl sm:text-4xl font-bold leading-tight mb-4 text-soft-charcoal">
+                Temukan Pasangan Warna Sempurna Anda
+            </h2>
+            <p class="font-editorial text-base sm:text-lg text-soft-charcoal/80 leading-relaxed">
+                Pilih satu rona utama melalui kotak spektrum warna di bawah ini atau masukkan kode warna secara langsung. Sistem kurasi kami akan meracik tiga turunan kombinasi harmonis bergaya editorial untuk inspirasi busana, interior, maupun desain visual Anda.
+            </p>
+        </section>
+
+        <!-- Grid Utama: Kiri (Square Color Wheel & Input) | Kanan (Hasil Kombinasi Beranak) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            
+            <!-- Kolom Kiri: Square Color Wheel & Input Box -->
+            <div class="lg:col-span-5 bg-soft-sand/70 p-6 sm:p-8 rounded-3xl border border-soft-charcoal/10 shadow-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="font-virtual text-xs uppercase tracking-widest font-bold text-soft-charcoal">01 / Spectrum Box</span>
+                    <span class="font-editorial italic text-sm text-soft-taupe">Geser atau ketik warna</span>
+                </div>
+
+                <!-- Kotak Color Wheel (Square Color Wheel) -->
+                <div class="relative w-full aspect-square rounded-2xl overflow-hidden mb-5 border border-soft-charcoal/15 shadow-inner bg-white">
+                    <canvas id="squareColorWheel" class="w-full h-full block"></canvas>
+                    <!-- Indikator titik pilihan pada kotak -->
+                    <div id="wheelCursor" class="w-5 h-5 rounded-full border-2 border-white shadow-[0_0_0_1.5px_#2C2A29] pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 transition-transform duration-75" style="left: 50%; top: 50%;"></div>
+                </div>
+
+                <!-- Hue Bar untuk mengubah spektrum dasar pada Square Color Wheel -->
+                <div class="mb-6">
+                    <div class="flex justify-between font-editorial text-xs text-soft-taupe mb-2 italic">
+                        <span>Spektrum Rona Dasar (Hue)</span>
+                        <span id="hueValueLabel">340°</span>
+                    </div>
+                    <input type="range" id="hueSlider" min="0" max="360" value="340" class="hue-slider" aria-label="Pilih Spektrum Hue">
+                </div>
+
+                <!-- Kotak Kosong Input Warna (Sesuai Permintaan: memasukkan 1 warna pada kotak kosong) -->
+                <div class="bg-soft-cream p-4 sm:p-5 rounded-2xl border border-soft-charcoal/15">
+                    <label for="colorInput" class="block font-virtual text-xs uppercase tracking-wider font-bold text-soft-charcoal mb-2">
+                        Masukkan Kode Warna Utama
+                    </label>
+                    <div class="flex items-center gap-3">
+                        <!-- Preview Swatch Aktif -->
+                        <div id="activeColorPreview" class="w-12 h-12 rounded-xl border border-soft-charcoal/20 shrink-0 shadow-sm transition-colors duration-200" style="background-color: #D8A7B1;"></div>
+                        
+                        <!-- Input Text Kosong / Siap Ketik -->
+                        <div class="relative flex-grow">
+                            <input 
+                                type="text" 
+                                id="colorInput" 
+                                placeholder="Contoh: #D8A7B1 atau pink" 
+                                value="#D8A7B1"
+                                autocomplete="off"
+                                class="w-full bg-white border border-soft-charcoal/20 rounded-xl px-4 py-3 font-editorial text-base sm:text-lg text-soft-charcoal placeholder:text-soft-taupe/50 placeholder:italic focus:outline-none focus:border-soft-charcoal transition-colors"
+                            >
+                            <button id="clearInputBtn" title="Kosongkan kotak" class="absolute right-3 top-1/2 -translate-y-1/2 text-soft-taupe hover:text-soft-charcoal text-xs font-editorial italic px-1.5 py-0.5 rounded">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                    <p id="inputHelperText" class="font-editorial italic text-xs text-soft-taupe mt-2.5">
+                        *Mendukung format HEX (#E6B8A2), RGB, atau nama warna Inggris (misal: sage, coral, lavender, beige).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Kolom Kanan: 3 Kombinasi Warna Beranak -->
+            <div class="lg:col-span-7 flex flex-col gap-6">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-soft-charcoal/15 pb-4 gap-2">
+                    <div>
+                        <span class="font-virtual text-xs uppercase tracking-widest font-bold text-soft-taupe">02 / Curated Pairings</span>
+                        <h3 class="font-virtual text-2xl sm:text-3xl font-bold text-soft-charcoal mt-1">
+                            Kombinasi Warna Beranak
+                        </h3>
+                    </div>
+                    <p class="font-editorial italic text-sm text-soft-taupe">
+                        Klik pada kartu warna untuk menyalin kode HEX
+                    </p>
+                </div>
+
+                <!-- Container untuk 3 Kombinasi Harmoni -->
+                <div id="palettesContainer" class="flex flex-col gap-6">
+                    <!-- Diisi secara dinamis melalui JavaScript -->
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer Editorial -->
+    <footer class="w-full border-t border-soft-charcoal/10 py-8 mt-12 bg-soft-sand/40">
+        <div class="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="font-virtual font-bold text-lg text-soft-charcoal">
+                ilyTint<span class="text-soft-taupe">.</span>
+            </div>
+            <p class="font-editorial italic text-sm text-soft-taupe">
+                Dirancang dengan estetika tipografi editorial untuk membantu harmoni visual Anda.
+            </p>
+            <p class="font-editorial text-xs text-soft-taupe">
+                &copy; 2026 ilyTint Atelier
+            </p>
+        </div>
+    </footer>
+
+    <!-- Notifikasi Toast saat menyalin warna (Pengganti alert) -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-soft-charcoal text-soft-cream px-5 py-3 rounded-2xl shadow-lg opacity-0 pointer-events-none translate-y-3 z-50 flex items-center gap-3">
+        <span id="toastSwatch" class="w-4 h-4 rounded-full border border-white/40 inline-block"></span>
+        <span id="toastMessage" class="font-editorial text-sm tracking-wide">Kode warna disalin</span>
+    </div>
+
+    <!-- Hidden textarea untuk fallback clipboard yang andal di semua iframe -->
+    <textarea id="clipboardHelper" class="sr-only" aria-hidden="true"></textarea>
+
+    <script>
+        /**
+         * ilyTint — Color Harmony & Square Color Wheel Engine
+         */
+
+        // Elemen DOM
+        const canvas = document.getElementById('squareColorWheel');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const wheelCursor = document.getElementById('wheelCursor');
+        const hueSlider = document.getElementById('hueSlider');
+        const hueValueLabel = document.getElementById('hueValueLabel');
+        const colorInput = document.getElementById('colorInput');
+        const clearInputBtn = document.getElementById('clearInputBtn');
+        const activeColorPreview = document.getElementById('activeColorPreview');
+        const inputHelperText = document.getElementById('inputHelperText');
+        const palettesContainer = document.getElementById('palettesContainer');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastSwatch = document.getElementById('toastSwatch');
+        const clipboardHelper = document.getElementById('clipboardHelper');
+
+        // State warna saat ini (dalam HSV / HSB)
+        let currentState = {
+            h: 347, // Hue (0 - 360)
+            s: 23,  // Saturation (0 - 100)
+            v: 85   // Value/Brightness (0 - 100)
+        };
+
+        let isDraggingWheel = false;
+        let toastTimeout = null;
+
+        /**
+         * Kamus nama warna estetis / umum untuk memudahkan pengguna mengetik nama warna di kotak kosong
+         */
+        const namedColors = {
+            'sage': '#9CAF88',
+            'blush': '#E8B4B8',
+            'cream': '#FFFDD0',
+            'beige': '#F5F5DC',
+            'terracotta': '#E2725B',
+            'lavender': '#C8A2C8',
+            'lilac': '#C8A2C8',
+            'mint': '#AAF0D1',
+            'peach': '#FFCBA4',
+            'coral': '#FF7F50',
+            'mauve': '#E0B0FF',
+            'taupe': '#483C32',
+            'ivory': '#FFFFF0',
+            'olive': '#808000',
+            'navy': '#000080',
+            'maroon': '#800000',
+            'mustard': '#FFDB58',
+            'rose': '#FF007F',
+            'dusty rose': '#DCAE96',
+            'baby blue': '#89CFF0',
+            'sky blue': '#87CEEB',
+            'mocha': '#967969',
+            'caramel': '#AF6E4D',
+            'champagne': '#F7E7CE'
+        };
+
+        /**
+         * Konversi HSV ke RGB
+         */
+        function hsvToRgb(h, s, v) {
+            s /= 100;
+            v /= 100;
+            const c = v * s;
+            const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+            const m = v - c;
+            let r = 0, g = 0, b = 0;
+
+            if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+            else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+            else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+            else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+            else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+            else { r = c; g = 0; b = x; }
+
+            return {
+                r: Math.round((r + m) * 255),
+                g: Math.round((g + m) * 255),
+                b: Math.round((b + m) * 255)
+            };
+        }
+
+        /**
+         * Konversi RGB ke HSV
+         */
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            const d = max - min;
+            let h = 0;
+            const s = max === 0 ? 0 : d / max;
+            const v = max;
+
+            if (max !== min) {
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                v: Math.round(v * 100)
+            };
+        }
+
+        /**
+         * Konversi RGB ke HEX
+         */
+        function rgbToHex(r, g, b) {
+            return "#" + [r, g, b].map(x => {
+                const hex = Math.max(0, Math.min(255, Math.round(x))).toString(16);
+                return hex.length === 1 ? "0" + hex : hex;
+            }).join("").toUpperCase();
+        }
+
+        /**
+         * Konversi HSL ke HEX (untuk perhitungan harmoni warna yang akurat)
+         */
+        function hslToHex(h, s, l) {
+            h = ((h % 360) + 360) % 360;
+            s = Math.max(0, Math.min(100, s)) / 100;
+            l = Math.max(0, Math.min(100, l)) / 100;
+
+            const c = (1 - Math.abs(2 * l - 1)) * s;
+            const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+            const m = l - c / 2;
+            let r = 0, g = 0, b = 0;
+
+            if (h >= 0 && h < 60) { r = c; g = x; b = 0; }
+            else if (h >= 60 && h < 120) { r = x; g = c; b = 0; }
+            else if (h >= 120 && h < 180) { r = 0; g = c; b = x; }
+            else if (h >= 180 && h < 240) { r = 0; g = x; b = c; }
+            else if (h >= 240 && h < 300) { r = x; g = 0; b = c; }
+            else { r = c; g = 0; b = x; }
+
+            return rgbToHex((r + m) * 255, (g + m) * 255, (b + m) * 255);
+        }
+
+        /**
+         * Konversi RGB ke HSL
+         */
+        function rgbToHsl(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h = 0, s = 0, l = (max + min) / 2;
+
+            if (max !== min) {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        /**
+         * Menentukan apakah teks di atas warna tertentu harus gelap atau terang
+         */
+        function getContrastTextColor(hex) {
+            const cleanHex = hex.replace('#', '');
+            const r = parseInt(cleanHex.substring(0, 2), 16);
+            const g = parseInt(cleanHex.substring(2, 4), 16);
+            const b = parseInt(cleanHex.substring(4, 6), 16);
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.62 ? '#2C2A29' : '#FAF8F5';
+        }
+
+        /**
+         * Menggambar Square Color Wheel pada Canvas berdasarkan Hue saat ini
+         */
+        function drawSquareColorWheel() {
+            const rect = canvas.getBoundingClientRect();
+            const size = Math.max(200, Math.floor(rect.width));
+            canvas.width = size;
+            canvas.height = size;
+
+            // 1. Isi dengan warna Hue penuh
+            ctx.fillStyle = `hsl(${currentState.h}, 100%, 50%)`;
+            ctx.fillRect(0, 0, size, size);
+
+            // 2. Gradasi putih horizontal (kiri ke kanan)
+            const whiteGrad = ctx.createLinearGradient(0, 0, size, 0);
+            whiteGrad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            whiteGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = whiteGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            // 3. Gradasi hitam vertikal (atas ke bawah)
+            const blackGrad = ctx.createLinearGradient(0, 0, 0, size);
+            blackGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            blackGrad.addColorStop(1, 'rgba(0, 0, 0, 1)');
+            ctx.fillStyle = blackGrad;
+            ctx.fillRect(0, 0, size, size);
+
+            updateCursorPosition();
+        }
+
+        /**
+         * Memperbarui posisi lingkaran kursor pada kotak warna
+         */
+        function updateCursorPosition() {
+            const xPercent = currentState.s;
+            const yPercent = 100 - currentState.v;
+            wheelCursor.style.left = `${xPercent}%`;
+            wheelCursor.style.top = `${yPercent}%`;
+        }
+
+        /**
+         * Menangani interaksi klik / sentuh pada Square Color Wheel
+         */
+        function handleWheelPointer(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+            let x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+            let y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+
+            currentState.s = Math.round((x / rect.width) * 100);
+            currentState.v = Math.round(100 - (y / rect.height) * 100);
+
+            updateCursorPosition();
+            syncFromState(true);
+        }
+
+        /**
+         * Menghasilkan 3 Kombinasi Warna Beranak dari warna induk yang dipilih
+         */
+        function generateChildCombinations(baseHex) {
+            const rgb = hsvToRgb(currentState.h, currentState.s, currentState.v);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            // Menjaga kelembutan warna (soft aesthetic) sambil mempertahankan kontras editorial
+            const baseH = hsl.h;
+            const baseS = hsl.s;
+            const baseL = hsl.l;
+
+            // Kombinasi 1: Soft Editorial Monochromatic & Tonal (Turunan lembut sewarna)
+            const combo1 = {
+                edition: "Edition I",
+                title: "Soft Tonal & Cream",
+                description: "Perpaduan monokromatik lembut yang menciptakan siluet tenang, bersih, dan mewah seperti lembaran editorial klasik.",
+                colors: [
+                    { hex: baseHex, role: "Warna Induk" },
+                    { hex: hslToHex(baseH, Math.max(12, baseS * 0.55), Math.min(92, baseL + 22)), role: "Tint Lembut" },
+                    { hex: hslToHex((baseH + 12) % 360, Math.max(10, baseS * 0.35), 94), role: "Silk Neutral" },
+                    { hex: hslToHex(baseH, Math.min(65, baseS * 0.85), Math.max(22, baseL - 28)), role: "Deep Accent" }
+                ]
+            };
+
+            // Kombinasi 2: Analogous Couture (Harmoni tetangga spektrum yang hangat & selaras)
+            const combo2 = {
+                edition: "Edition II",
+                title: "Analogous Harmony",
+                description: "Mengawinkan rona utama dengan tetangga terdekatnya pada roda warna untuk transisi visual yang organik dan memanjakan mata.",
+                colors: [
+                    { hex: baseHex, role: "Warna Induk" },
+                    { hex: hslToHex((baseH + 28) % 360, Math.min(75, Math.max(25, baseS * 0.9)), Math.min(84, Math.max(45, baseL + 5))), role: "Warm Companion" },
+                    { hex: hslToHex((baseH - 28 + 360) % 360, Math.min(70, Math.max(22, baseS * 0.85)), Math.min(86, Math.max(48, baseL + 8))), role: "Cool Companion" },
+                    { hex: hslToHex((baseH + 15) % 360, 18, 28), role: "Editorial Charcoal" }
+                ]
+            };
+
+            // Kombinasi 3: Pastel Split-Complementary (Kontras modern namun tetap lembut/soft)
+            const combo3 = {
+                edition: "Edition III",
+                title: "Soft Contrast Chic",
+                description: "Sentuhan warna seberang yang diredam kelembutannya—memberi karakter berani tanpa kehilangan keanggunan minimalis.",
+                colors: [
+                    { hex: baseHex, role: "Warna Induk" },
+                    { hex: hslToHex((baseH + 155) % 360, Math.min(55, Math.max(24, baseS * 0.75)), Math.min(85, Math.max(55, baseL + 6))), role: "Pastel Counter" },
+                    { hex: hslToHex((baseH + 205) % 360, Math.min(48, Math.max(20, baseS * 0.65)), Math.min(88, Math.max(60, baseL + 10))), role: "Soft Balance" },
+                    { hex: hslToHex((baseH + 180) % 360, 14, 91), role: "Misty Alabaster" }
+                ]
+            };
+
+            return [combo1, combo2, combo3];
+        }
+
+        /**
+         * Merender 3 kartu kombinasi warna beranak ke halaman
+         */
+        function renderPalettes(baseHex) {
+            const combinations = generateChildCombinations(baseHex);
+            palettesContainer.innerHTML = '';
+
+            combinations.forEach((combo, index) => {
+                const card = document.createElement('article');
+                card.className = "bg-white rounded-3xl p-6 sm:p-7 border border-soft-charcoal/10 shadow-sm hover:shadow-md transition-shadow animate-editorial";
+                card.style.animationDelay = `${index * 90}ms`;
+
+                const swatchesHtml = combo.colors.map(item => {
+                    const textColor = getContrastTextColor(item.hex);
+                    return `
+                        <button 
+                            type="button"
+                            onclick="copyHexColor('${item.hex}')"
+                            class="group relative flex flex-col justify-between h-28 sm:h-36 p-3.5 rounded-2xl border border-soft-charcoal/10 text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-soft-charcoal/30"
+                            style="background-color: ${item.hex}; color: ${textColor};"
+                            title="Klik untuk menyalin ${item.hex}"
+                        >
+                            <span class="font-editorial italic text-[11px] sm:text-xs opacity-85 leading-tight">
+                                ${item.role}
+                            </span>
+                            <div class="w-full flex items-end justify-between">
+                                <span class="font-virtual text-xs sm:text-sm font-bold tracking-wider uppercase">
+                                    ${item.hex}
+                                </span>
+                                <span class="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-editorial italic underline">
+                                    Salin
+                                </span>
+                            </div>
+                        </button>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2">
+                        <div class="flex items-baseline gap-2.5">
+                            <span class="font-editorial italic text-xs uppercase tracking-widest text-soft-taupe">${combo.edition}</span>
+                            <h4 class="font-virtual text-lg sm:text-xl font-bold text-soft-charcoal">${combo.title}</h4>
+                        </div>
+                        <span class="font-editorial italic text-xs text-soft-taupe">4 Warna Harmonis</span>
+                    </div>
+                    <p class="font-editorial text-sm sm:text-base text-soft-charcoal/80 mb-5 leading-relaxed">
+                        ${combo.description}
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        ${swatchesHtml}
+                    </div>
+                `;
+
+                palettesContainer.appendChild(card);
+            });
+        }
+
+        /**
+         * Sinkronisasi tampilan dari state HSV saat ini
+         */
+        function syncFromState(updateInputText = true) {
+            const rgb = hsvToRgb(currentState.h, currentState.s, currentState.v);
+            const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+            hueSlider.value = currentState.h;
+            hueValueLabel.textContent = `${currentState.h}°`;
+            activeColorPreview.style.backgroundColor = hex;
+
+            if (updateInputText) {
+                colorInput.value = hex;
+            }
+
+            renderPalettes(hex);
+        }
+
+        /**
+         * Mem-parsing input pengguna dari kotak teks (HEX, RGB, atau Nama Warna CSS/Kurasi)
+         */
+        function parseUserColorInput(rawValue) {
+            const val = rawValue.trim().toLowerCase();
+            if (!val) return null;
+
+            // Cek kamus warna estetis kustom terlebih dahulu
+            const targetColor = namedColors[val] || val;
+
+            // Gunakan elemen dummy browser untuk memvalidasi warna CSS apapun (hex, rgb, hsl, nama warna)
+            const dummy = document.createElement('div');
+            dummy.style.color = '';
+            dummy.style.color = targetColor;
+
+            // Jika pengguna mengetik hex tanpa '#' seperti 'd8a7b1'
+            if (!dummy.style.color && /^[0-9a-f]{3}$|^[0-9a-f]{6}$/i.test(targetColor)) {
+                dummy.style.color = '#' + targetColor;
+            }
+
+            if (!dummy.style.color) return null;
+
+            document.body.appendChild(dummy);
+            const computedColor = getComputedStyle(dummy).color;
+            document.body.removeChild(dummy);
+
+            const match = computedColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+            if (!match) return null;
+
+            return {
+                r: parseInt(match[1], 10),
+                g: parseInt(match[2], 10),
+                b: parseInt(match[3], 10)
+            };
+        }
+
+        /**
+         * Menyalin kode HEX ke clipboard dengan notifikasi toast halus
+         */
+        function copyHexColor(hex) {
+            clipboardHelper.value = hex;
+            clipboardHelper.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                // Abaikan jika gagal
+            }
+
+            toastSwatch.style.backgroundColor = hex;
+            toastMessage.textContent = `Warna ${hex} berhasil disalin`;
+            toast.classList.remove('opacity-0', 'translate-y-3', 'pointer-events-none');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-3', 'pointer-events-none');
+            }, 2400);
+        }
+
+        // Event Listeners untuk Square Color Wheel (Mouse & Touch)
+        canvas.addEventListener('mousedown', (e) => {
+            isDraggingWheel = true;
+            handleWheelPointer(e);
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (isDraggingWheel) handleWheelPointer(e);
+        });
+        window.addEventListener('mouseup', () => {
+            isDraggingWheel = false;
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            isDraggingWheel = true;
+            handleWheelPointer(e);
+        }, { passive: true });
+        window.addEventListener('touchmove', (e) => {
+            if (isDraggingWheel) handleWheelPointer(e);
+        }, { passive: true });
+        window.addEventListener('touchend', () => {
+            isDraggingWheel = false;
+        });
+
+        // Event Listener untuk Hue Slider
+        hueSlider.addEventListener('input', (e) => {
+            currentState.h = parseInt(e.target.value, 10);
+            drawSquareColorWheel();
+            syncFromState(true);
+        });
+
+        // Event Listener untuk Kotak Input Warna
+        colorInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.trim() === '') {
+                palettesContainer.innerHTML = `
+                    <div class="bg-soft-sand/50 border border-dashed border-soft-charcoal/20 rounded-3xl p-10 text-center">
+                        <p class="font-virtual text-lg font-bold text-soft-charcoal mb-2">Menunggu Warna Pilihan Anda</p>
+                        <p class="font-editorial italic text-base text-soft-taupe">
+                            Ketik kode warna pada kotak di samping (misalnya <span class="underline cursor-pointer" onclick="applySampleColor('#D8A7B1')">#D8A7B1</span> atau <span class="underline cursor-pointer" onclick="applySampleColor('sage')">sage</span>) atau sentuh kotak spektrum warna.
+                        </p>
+                    </div>
+                `;
+                activeColorPreview.style.backgroundColor = 'transparent';
+                return;
+            }
+
+            const parsedRgb = parseUserColorInput(val);
+            if (parsedRgb) {
+                const hsv = rgbToHsv(parsedRgb.r, parsedRgb.g, parsedRgb.b);
+                currentState = hsv;
+                drawSquareColorWheel();
+                syncFromState(false); // Jangan timpa ketikan user saat sedang mengetik
+                inputHelperText.textContent = "*Warna valid terdeteksi. Menampilkan 3 kombinasi harmoni beranak.";
+                inputHelperText.classList.remove('text-red-600');
+                inputHelperText.classList.add('text-soft-taupe');
+            } else {
+                inputHelperText.textContent = "*Teruskan mengetik kode warna yang valid (contoh: #E8D8D5, peach, olive)...";
+            }
+        });
+
+        // Tombol untuk mengosongkan kotak input agar user bisa langsung mengetik warna baru
+        clearInputBtn.addEventListener('click', () => {
+            colorInput.value = '';
+            colorInput.focus();
+            colorInput.dispatchEvent(new Event('input'));
+        });
+
+        // Fungsi bantu jika user mengeklik contoh warna saat kotak kosong
+        window.applySampleColor = function(sample) {
+            colorInput.value = sample;
+            colorInput.dispatchEvent(new Event('input'));
+        };
+
+        // Responsif saat ukuran layar berubah
+        window.addEventListener('resize', () => {
+            drawSquareColorWheel();
+        });
+
+        // Inisialisasi saat halaman selesai dimuat
+        window.onload = function() {
+            drawSquareColorWheel();
+            syncFromState(true);
+        };
+    </script>
+</body>
+</html>
