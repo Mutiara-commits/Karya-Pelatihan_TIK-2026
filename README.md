@@ -25,4 +25,5 @@ Gaya: minimalis, warna soft, dengan font virtual sebagai judul dan font times Ne
 Berikan kode lengkap tanpa dipotong dalam satu blok kode, lalu jelaskan singkat cara menjalankannya.
 
 
-Rintangan
+Rintangan : none
+Solusi : none
